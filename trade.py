@@ -160,4 +160,4 @@ if not st.session_state.portfolio.empty:
     st.write(f"Current Portfolio Value: ${total_value:.2f}")
     st.write(f"Overall Performance: {performance:.2f}%")
 else:
-    st.write("No performance metrics to display")
+    st.write("No performance metrics to display") 
