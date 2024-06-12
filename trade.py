@@ -239,7 +239,7 @@ def main():
     with tab7:
         st.subheader('Load Money')
         st.write('scan QR using any payment aggregator || copy your transaction id and enter below')
-        st.image(r'C:\Users\Shashank\OneDrive\Desktop\papertrade\QR.jpg', caption='Scan this QR code for payment', width=200)
+        st.image('QR.jpg', caption='Scan this QR code for payment', width=200)
         st.write('Enter your transaction ID to proceed with loading money.')
         st.markdown("<marquee style='color: red;'>Caution: Enter transaction ID only after payment. If we don't find a matching ID, REFUND will not be executed.</marquee>", unsafe_allow_html=True)
         random_number = st.text_input('Transaction ID:')
