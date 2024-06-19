@@ -77,7 +77,7 @@ def main():
         st.sidebar.plotly_chart(fig)
 
     # Tabs for different sections
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(['Portfolio', 'Transaction History', 'Performance', 'Trade', 'Analytics', 'Watchlist', 'Load Money'])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(['Portfolio', 'Transaction History', 'Performance', 'Trade', 'Analytics', 'Watchlist', 'Load Money', 'info'])
 
     with tab1:
         st.subheader('Your Virtual Portfolio')
@@ -248,6 +248,17 @@ def main():
             if st.button('Load Money'):
                 st.session_state.cash_balance += amount_to_load * amount_to_load
                 st.success(f'${amount_to_load * amount_to_load} loaded to your account.')
-
+    with tab8:
+        st.subheader('Information')
+        st.write('this simulator just shows the working of trading platform , where beginners can get started')
+        st.write('there are tabs/options to choose but follow these steps for clear vision')
+        st.write('step 1 : go to trade and buy some stock')
+        st.write('step 2 : check out portfolio for holding info')
+        st.write('step 3 : checkout transactions for transacted details ')
+        st.write('info: you can know more about stock in left top bar button , add correct stock keyword  ')
+        st.write('info :  you can put some stocks for watclist in watchlist tab')
+        st.write('info : if you run out of money , visit load money tab ')
+        st.write('great! now you have good to try out ')
+        st.write('Thankyou')
 if __name__ == '__main__':
     main()
