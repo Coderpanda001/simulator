@@ -258,7 +258,7 @@ def main():
         st.write('info: you can know more about stock in left top bar button , add correct stock keyword  ')
         st.write('info :  you can put some stocks for watclist in watchlist tab')
         st.write('info : if you run out of money , visit load money tab ')
-        st.write('great! now you have good to try out ')
+        st.write('great! now youre good to go , try out more  ')
         st.write('Thankyou')
 if __name__ == '__main__':
     main()
