@@ -241,6 +241,7 @@ def main():
         st.write('scan QR using any payment aggregator || copy your transaction id and enter below')
         st.image('QR.jpg', caption='Scan this QR code for payment', width=200)
         st.write('Enter your transaction ID to proceed with loading money.')
+        st.write('Trouble loading money ? click link to contact us : https://tradelitcare.streamlit.app ') 
         st.markdown("<marquee style='color: red;'>Caution: Enter transaction ID only after payment. If we don't find a matching ID, REFUND will not be executed.</marquee>", unsafe_allow_html=True)
         random_number = st.text_input('Transaction ID:')
         if len(random_number) >= 8:
