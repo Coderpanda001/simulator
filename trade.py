@@ -260,5 +260,10 @@ def main():
         st.write('info : if you run out of money , visit load money tab ')
         st.write('great! now youre good to go , try out more  ')
         st.write('Thankyou')
+
+    # Display MarketWatch queries
+    st.markdown("---")
+    st.markdown("Contact Us / support:")
+    st.markdown("- click here : https://tradelitcare.streamlit.app ")
 if __name__ == '__main__':
     main()
