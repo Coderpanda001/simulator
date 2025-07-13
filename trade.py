@@ -24,17 +24,15 @@ def initialize_session_state():
 def fetch_stock_price(ticker):
     try:
         stock = yf.Ticker(ticker)
-        return stock.history(period="1d")['Close'].iloc[0]
+        return stock.history(period="1d")['Close'].iloc[-1]
     except:
         return 0.0
 
 def fetch_stock_details(ticker):
-    stock = yf.Ticker(ticker)
-    return stock.info
+    return yf.Ticker(ticker).info
 
 def fetch_stock_history(ticker, period='1mo'):
-    stock = yf.Ticker(ticker)
-    return stock.history(period=period)
+    return yf.Ticker(ticker).history(period=period)
 
 def calculate_rsi(data, window=14):
     delta = data.diff()
@@ -45,7 +43,6 @@ def calculate_rsi(data, window=14):
 
 def main():
     st.title('📈 Advanced Paper Trading Simulator')
-
     initialize_session_state()
 
     st.sidebar.header('🔍 Stock Search')
@@ -93,6 +90,8 @@ def main():
             st.table(history_df)
             fig = px.line(history_df, x='Date', y='Total', color='Type', title='Transaction History Over Time')
             st.plotly_chart(fig)
+        else:
+            st.info("No transactions yet.")
 
     with tabs[2]:
         st.subheader('📈 Portfolio Performance')
@@ -105,13 +104,14 @@ def main():
         st.subheader('🔍 Portfolio Analytics')
         total_value = sum(st.session_state.portfolio[stock] * fetch_stock_price(stock) for stock in available_stocks) + st.session_state.cash_balance
         st.write(f'Total Portfolio Value: ${total_value:.2f}')
-        diversification = {
-            stock: (st.session_state.portfolio[stock] * fetch_stock_price(stock)) / total_value
-            for stock in available_stocks if total_value > 0
-        }
-        diversification_df = pd.DataFrame(list(diversification.items()), columns=['Stock', 'Proportion'])
-        fig = px.bar(diversification_df, x='Stock', y='Proportion', title='Portfolio Diversification')
-        st.plotly_chart(fig)
+        if total_value > 0:
+            diversification = {
+                stock: (st.session_state.portfolio[stock] * fetch_stock_price(stock)) / total_value
+                for stock in available_stocks
+            }
+            diversification_df = pd.DataFrame(list(diversification.items()), columns=['Stock', 'Proportion'])
+            fig = px.bar(diversification_df, x='Stock', y='Proportion', title='Portfolio Diversification')
+            st.plotly_chart(fig)
 
     with tabs[3]:
         st.subheader('💼 Trade Stocks')
@@ -119,35 +119,44 @@ def main():
         current_price = fetch_stock_price(selected_stock)
         st.write(f'Current price of {selected_stock}: ${current_price:.2f}')
         quantity = st.number_input('Enter quantity:', min_value=1, step=1)
+
         if st.button('Buy'):
             cost = quantity * current_price
             if st.session_state.cash_balance >= cost:
                 st.session_state.portfolio[selected_stock] += quantity
                 st.session_state.cash_balance -= cost
-                st.success(f'Bought {quantity} shares of {selected_stock}')
+                st.success(f'✅ Bought {quantity} shares of {selected_stock} at ${current_price:.2f}')
+                st.session_state.transaction_history.append({
+                    'Date': datetime.datetime.now(),
+                    'Stock': selected_stock,
+                    'Type': 'Buy',
+                    'Quantity': quantity,
+                    'Price': current_price,
+                    'Total': cost
+                })
+                total_val = sum(st.session_state.portfolio[stock] * fetch_stock_price(stock) for stock in available_stocks) + st.session_state.cash_balance
+                st.session_state.performance.append({'Date': datetime.datetime.now(), 'Total Value': total_val})
             else:
-                st.error('Insufficient funds.')
+                st.error('❌ Insufficient funds.')
 
         if st.button('Sell'):
             if st.session_state.portfolio[selected_stock] >= quantity:
                 revenue = quantity * current_price
                 st.session_state.portfolio[selected_stock] -= quantity
                 st.session_state.cash_balance += revenue
-                st.success(f'Sold {quantity} shares of {selected_stock}')
+                st.success(f'✅ Sold {quantity} shares of {selected_stock} at ${current_price:.2f}')
+                st.session_state.transaction_history.append({
+                    'Date': datetime.datetime.now(),
+                    'Stock': selected_stock,
+                    'Type': 'Sell',
+                    'Quantity': quantity,
+                    'Price': current_price,
+                    'Total': revenue
+                })
+                total_val = sum(st.session_state.portfolio[stock] * fetch_stock_price(stock) for stock in available_stocks) + st.session_state.cash_balance
+                st.session_state.performance.append({'Date': datetime.datetime.now(), 'Total Value': total_val})
             else:
-                st.error('Not enough shares to sell.')
-
-        if st.button('Record Transaction'):
-            st.session_state.transaction_history.append({
-                'Date': datetime.datetime.now(),
-                'Stock': selected_stock,
-                'Type': 'Buy' if st.session_state.portfolio[selected_stock] else 'Sell',
-                'Quantity': quantity,
-                'Price': current_price,
-                'Total': quantity * current_price
-            })
-            total_val = sum(st.session_state.portfolio[stock] * fetch_stock_price(stock) for stock in available_stocks) + st.session_state.cash_balance
-            st.session_state.performance.append({'Date': datetime.datetime.now(), 'Total Value': total_val})
+                st.error('❌ Not enough shares to sell.')
 
     with tabs[4]:
         st.subheader('📊 Advanced Analytics')
